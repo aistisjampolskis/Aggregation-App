@@ -8,16 +8,16 @@ public class Apartment : BaseEntity
     public string OBT_PAVADINIMAS { get; private set; }
     public string OBJ_GV_TIPAS { get; private set; }
     public int OBJ_NUMERIS { get; private set; }
-    public decimal P_PLUS { get; private set; }
+    public decimal? P_PLUS { get; private set; }
     public DateTime PL_T { get; private set; }
-    public decimal P_MINUS { get; private set; }
+    public decimal? P_MINUS { get; private set; }
 
     private Apartment()
     {
         // This empty constructor is required for Dapper materialization
     }
 
-    public Apartment(string TINKLAS, string OBT_PAVADINIMAS, string OBJ_GV_TIPAS, int OBJ_NUMERIS, decimal P_PLUS, DateTime PL_T, decimal P_MINUS)
+    public Apartment(string TINKLAS, string OBT_PAVADINIMAS, string OBJ_GV_TIPAS, int OBJ_NUMERIS, decimal? P_PLUS, DateTime PL_T, decimal? P_MINUS)
     {
         SET_TINKLAS(TINKLAS);
         SET_OBT_PAVADINIMAS(OBT_PAVADINIMAS);
