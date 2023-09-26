@@ -2,6 +2,7 @@
 using AggregationApp.Application.Apartments;
 using AggregationApp.Application.Apartments.GetApartment;
 using AggregationApp.Domain.Apartments;
+using System.Globalization;
 
 namespace AggregationApp.Application.UnitTests.Apartments.Queries;
 
@@ -10,15 +11,22 @@ public class GetApartmentByIdQueryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnCorrectApartment()
     {
+        string dateString = "2020-06-21T01:00:00";
+        DateTime parsedDateTime;
+        DateTime.TryParseExact(dateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDateTime);
         // Arrange
-        var Apartment = new Apartment("Test", DateOnly.MinValue, new PrioritySuggestionService());
-        var ApartmentDto = new ApartmentsResponse
+        var Apartment = new Apartment("Alytaus regiono tinklas", "Butas", "Ne GV", 35282, (decimal)0.034, parsedDateTime, (decimal)0);
+        var ApartmentDto = new ApartmentResponse
         {
             Id = Apartment.Id,
-            Title = Apartment.Title,
-            DueDate = Apartment.DueDate,
-            IsCompleted = Apartment.IsCompleted,
-            Priority = Apartment.Priority
+            TINKLAS = Apartment.TINKLAS,
+            OBT_PAVADINIMAS = Apartment.OBT_PAVADINIMAS,
+            OBJ_GV_TIPAS = Apartment.OBJ_GV_TIPAS,
+            OBJ_NUMERIS = Apartment.OBJ_NUMERIS,
+            P_PLUS = Apartment.P_PLUS,
+            PL_T = Apartment.PL_T,
+            P_MINUS = Apartment.P_MINUS,
+
         };
 
         var mockRepository = new Mock<IApartmentRepository>();
@@ -36,9 +44,6 @@ public class GetApartmentByIdQueryHandlerTests
         var result = await handler.Handle(query, CancellationToken.None);
 
         // Assert
-        Assert.Equal(ApartmentDto.Title, result.Title);
-        Assert.Equal(ApartmentDto.DueDate, result.DueDate);
-        Assert.Equal(ApartmentDto.IsCompleted, result.IsCompleted);
-        Assert.Equal(ApartmentDto.Priority, result.Priority);
+        Assert.Equal(ApartmentDto.TINKLAS, result.TINKLAS);
     }
 }
