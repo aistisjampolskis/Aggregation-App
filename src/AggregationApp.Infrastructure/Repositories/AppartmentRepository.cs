@@ -23,7 +23,7 @@ public class ApartmentRepository : IApartmentRepository
 
     public async Task<List<Apartment>> GetAllAsyncPaginated(int skipAmount, int pageSize)
     {
-        const string sql = "SELECT * FROM Apartments ORDER BY Id LIMIT @SkipAmount, @PageSize";
+        const string sql = "SELECT * FROM Apartments GROUP BY Id ORDER BY TINKLAS LIMIT @SkipAmount, @PageSize";
         var parameters = new { SkipAmount = skipAmount, PageSize = pageSize };
         var apartments = await _connection.QueryAsync<Apartment>(sql, parameters);
         return apartments.ToList();
