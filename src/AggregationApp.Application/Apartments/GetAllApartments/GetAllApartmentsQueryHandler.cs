@@ -14,7 +14,9 @@ public class GetAllApartmentsQueryHandler : IRequestHandler<GetAllApartmentsQuer
 
     public async Task<List<ApartmentResponse>> Handle(GetAllApartmentsQuery query, CancellationToken cancellationToken)
     {
-        var apartments = await _repository.GetAllAsync();
+        var skipAmount = (query.Page - 1) * query.PageSize;
+
+        var apartments = await _repository.GetAllAsyncPaginated(skipAmount, query.PageSize);
 
         return apartments.Select(apartment => new ApartmentResponse
         {

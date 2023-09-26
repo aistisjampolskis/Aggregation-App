@@ -5,7 +5,6 @@ using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.Configuration;
-using AggregationApp.Domain.Apartments;
 
 
 
@@ -13,11 +12,9 @@ public static class CsvImport
 {
 
 
-    public static async Task ImportCsvAsync(IConfiguration configuration)
+    public static async Task ImportCsvAsync(IConfiguration configuration, string csvUrl, bool clearTable)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException(nameof(configuration));
-
-        string csvUrl = "https://data.gov.lt/dataset/1975/download/10743/2020-06.csv";
 
         using (HttpClient httpClient = new HttpClient())
         {
@@ -31,9 +28,6 @@ public static class CsvImport
                 using (IDbConnection dbConnection = new MySqlConnection(connectionString))
                 {
                     dbConnection.Open();
-
-                    //Clear Database on Init
-                    await dbConnection.ExecuteAsync("DELETE FROM Apartments");
 
                     // Create the "Apartments" table if it doesn't exist
                     await dbConnection.ExecuteAsync(@"
@@ -49,34 +43,41 @@ public static class CsvImport
                     );"
                     );
 
-                    Console.WriteLine("Loading CSV");
-                    Console.WriteLine(records.Count);
+                    if (clearTable)
+                    {
+                        //Clear Database Table on Init
+                        await dbConnection.ExecuteAsync("DELETE FROM Apartments");
+                    }
+
+                    Console.WriteLine("Loading CSV " + csvUrl);
 
                     // We set max concurrent don't exceed maximum database connections
                     var maxConcurrentTasks = 10;
                     var semaphore = new SemaphoreSlim(maxConcurrentTasks);
 
                     // Use Parallel.ForEach to insert records concurrently
-                    Parallel.ForEach(records, async record =>
-                    {
-                        await semaphore.WaitAsync();
-                        try
-                        {
-                            using (IDbConnection dbConnection = new MySqlConnection(connectionString))
-                            {
-                                await dbConnection.ExecuteAsync(@"
-                            INSERT INTO Apartments (TINKLAS, OBT_PAVADINIMAS, OBJ_GV_TIPAS, OBJ_NUMERIS, P_PLUS, PL_T, P_MINUS)
-                            VALUES (@TINKLAS, @OBT_PAVADINIMAS, @OBJ_GV_TIPAS, @OBJ_NUMERIS, @P_PLUS, @PL_T, @P_MINUS)
-                             ", record);
-                            }
-                        }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    });
+                    var loop = Parallel.ForEach(records, async record =>
+                      {
+                          await semaphore.WaitAsync();
+                          try
+                          {
+                              using (IDbConnection dbConnection = new MySqlConnection(connectionString))
+                              {
+                                  await dbConnection.ExecuteAsync(@"
+                                    INSERT INTO Apartments (TINKLAS, OBT_PAVADINIMAS, OBJ_GV_TIPAS, OBJ_NUMERIS, P_PLUS, PL_T, P_MINUS)
+                                    SELECT @TINKLAS, @OBT_PAVADINIMAS, @OBJ_GV_TIPAS, @OBJ_NUMERIS, @P_PLUS, @PL_T, @P_MINUS
+                                    WHERE @OBT_PAVADINIMAS = 'Butas'
+                                ", record);
 
-                    Console.WriteLine("Loaded CSV!");
+                              }
+                          }
+                          finally
+                          {
+                              semaphore.Release();
+                          }
+                      });
+
+                    Console.WriteLine("Loaded CSV");
                 }
             }
         }

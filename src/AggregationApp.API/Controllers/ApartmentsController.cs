@@ -18,9 +18,9 @@ namespace AggregationApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetAllApartmentsQuery());
+            var result = await _mediator.Send(new GetAllApartmentsQuery(page, pageSize));
             return Ok(result);
         }
 

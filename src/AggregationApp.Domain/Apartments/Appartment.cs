@@ -19,43 +19,12 @@ public class Apartment : BaseEntity
 
     public Apartment(string TINKLAS, string OBT_PAVADINIMAS, string OBJ_GV_TIPAS, int OBJ_NUMERIS, decimal? P_PLUS, DateTime PL_T, decimal? P_MINUS)
     {
-        SET_TINKLAS(TINKLAS);
-        SET_OBT_PAVADINIMAS(OBT_PAVADINIMAS);
-        SET_OBJ_GV_TIPAS(OBJ_GV_TIPAS);
-        SET_OBJ_NUMERIS(OBJ_NUMERIS);
-        SET_PL_T(PL_T);
+        this.TINKLAS = TINKLAS;
+        this.OBT_PAVADINIMAS = OBT_PAVADINIMAS;
+        this.OBJ_GV_TIPAS = OBJ_GV_TIPAS;
+        this.OBJ_NUMERIS = OBJ_NUMERIS;
         this.P_PLUS = P_PLUS;
         this.P_MINUS = P_MINUS;
+        this.PL_T = PL_T;
     }
-
-    public void SET_TINKLAS(string TINKLAS)
-    {
-        if (string.IsNullOrWhiteSpace(TINKLAS))
-            throw new ArgumentException("Tinklas cannot be empty.");
-
-        this.TINKLAS = TINKLAS;
-    }
-
-    public void SET_OBT_PAVADINIMAS(string OBT_PAVADINIMAS)
-    {
-        if (string.IsNullOrWhiteSpace(OBT_PAVADINIMAS))
-            throw new ArgumentException("OBT_PAVADINIMAS cannot be empty.");
-
-        this.OBT_PAVADINIMAS = OBT_PAVADINIMAS;
-    }
-
-    public void SET_OBJ_GV_TIPAS(string OBJ_GV_TIPAS)
-    {
-        this.OBJ_GV_TIPAS = OBJ_GV_TIPAS;
-    }
-
-    public void SET_OBJ_NUMERIS(int OBJ_NUMERIS)
-    {
-        this.OBJ_NUMERIS = OBJ_NUMERIS;
-    }
-    public void SET_PL_T(DateTime dateTime)
-    {
-        this.PL_T = dateTime;
-    }
-
 }

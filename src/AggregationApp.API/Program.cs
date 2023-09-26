@@ -22,6 +22,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 
-CsvImport.ImportCsvAsync(app.Configuration).Wait();
+CsvImport.ImportCsvAsync(app.Configuration, "https://data.gov.lt/dataset/1975/download/10743/2020-06.csv", true).Wait();
+CsvImport.ImportCsvAsync(app.Configuration, "https://data.gov.lt/dataset/1975/download/10744/2020-07.csv", false).Wait();
 
 app.Run();

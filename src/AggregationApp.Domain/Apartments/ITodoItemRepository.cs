@@ -3,7 +3,6 @@
 public interface IApartmentRepository
 {
     Task<Apartment> GetByIdAsync(int id);
-    Task<List<Apartment>> GetAllAsync();
-    Task AddAsync(Apartment item);
+    Task<List<Apartment>> GetAllAsyncPaginated(int skipAmount, int pageSize);
 
 }

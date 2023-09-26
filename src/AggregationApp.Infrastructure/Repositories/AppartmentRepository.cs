@@ -21,16 +21,11 @@ public class ApartmentRepository : IApartmentRepository
         return await _connection.QuerySingleOrDefaultAsync<Apartment>(sql, new { Id = id });
     }
 
-    public async Task<List<Apartment>> GetAllAsync()
+    public async Task<List<Apartment>> GetAllAsyncPaginated(int skipAmount, int pageSize)
     {
-        const string sql = "SELECT * FROM Apartments";
-        var Apartments = await _connection.QueryAsync<Apartment>(sql);
-        return Apartments.ToList();
-    }
-
-    public async Task AddAsync(Apartment item)
-    {
-        const string sql = "INSERT INTO Apartments (Title, DueDate, IsCompleted) VALUES (@Title, @DueDate, @IsCompleted)";
-        await _connection.ExecuteAsync(sql, item);
+        const string sql = "SELECT * FROM Apartments ORDER BY Id LIMIT @SkipAmount, @PageSize";
+        var parameters = new { SkipAmount = skipAmount, PageSize = pageSize };
+        var apartments = await _connection.QueryAsync<Apartment>(sql, parameters);
+        return apartments.ToList();
     }
 }
